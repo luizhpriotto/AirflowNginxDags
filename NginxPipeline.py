@@ -1,6 +1,7 @@
 from datetime import datetime
 from airflow import DAG
 from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator
+from airflow.providers.google.cloud.transfers.gcs_to_gcs import GCSToGCSOperator
 
 # Define the DAG
 dag = DAG(
@@ -13,7 +14,7 @@ dag = DAG(
 
 CreateBucket = GCSCreateBucketOperator(
     task_id="CreateNewBucket",
-    bucket_name="test-bucket",
+    bucket_name="nginx-process-priotto",
     storage_class="STANDARD",
     location="US",
     labels={"env": "dev", "team": "airflow"},
@@ -21,6 +22,17 @@ CreateBucket = GCSCreateBucketOperator(
     dag=dag
 )
 
+copy_files_with_match_glob = GCSToGCSOperator(
+    task_id="copy_files_with_match_glob",
+    source_bucket=estudos-gcp-priotto,
+    source_object="nginx/",
+    destination_bucket=nginx-process-priotto,
+    destination_object="/",
+    match_glob="**/*.csv",
+)
 
-# If you have more tasks, define them here and set dependencies
-# For this simple example, we only have one task
+
+
+
+
+CreateBucket >> copy_files_with_match_glob
