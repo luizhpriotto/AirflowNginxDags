@@ -24,9 +24,9 @@ CreateBucket = GCSCreateBucketOperator(
 
 copy_files_with_match_glob = GCSToGCSOperator(
     task_id="copy_files_with_match_glob",
-    source_bucket=estudos-gcp-priotto,
+    source_bucket="estudos-gcp-priotto",
     source_object="nginx/",
-    destination_bucket=nginx-process-priotto,
+    destination_bucket="nginx-process-priotto",
     destination_object="/",
     match_glob="**/*.csv",
 )
