@@ -1,26 +1,26 @@
 from datetime import datetime
 from airflow import DAG
-from airflow.operators.python import PythonOperator
-
-# Define the Python function that will be called by the PythonOperator
-def print_hello():
-    print("Hello, World!")
+from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator
 
 # Define the DAG
 dag = DAG(
     'hello_world',
     description='A simple hello world DAG',
-    schedule_interval='0 12 * * *',  # Daily at noon
+    schedule_interval=None,  # Daily at noon
     start_date=datetime(2024, 1, 1),
     catchup=False
 )
 
-# Define the task using PythonOperator
-hello_task = PythonOperator(
-    task_id='print_hello_task',
-    python_callable=print_hello,
+CreateBucket = GCSCreateBucketOperator(
+    task_id="CreateNewBucket",
+    bucket_name="test-bucket",
+    storage_class="STANDARD",
+    location="US",
+    labels={"env": "dev", "team": "airflow"},
+    gcp_conn_id="airflow-conn-id",
     dag=dag
 )
+
 
 # If you have more tasks, define them here and set dependencies
 # For this simple example, we only have one task
